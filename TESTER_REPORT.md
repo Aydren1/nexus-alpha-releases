@@ -6,7 +6,7 @@
 
 ## Environment
 
-- NEXUS version: 0.5.0-alpha.7.2
+- NEXUS version: 0.5.0-alpha.7.3
 - Windows version:
 - Display count and scaling:
 - Queue or feature involved:
