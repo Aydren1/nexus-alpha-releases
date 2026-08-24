@@ -1,4 +1,4 @@
-# NEXUS Alpha 7 tester guide
+# NEXUS Alpha 8 tester guide
 
 ## Supported system
 
@@ -9,7 +9,7 @@
 
 ## Installation
 
-1. Download the Alpha 7 ZIP only from the official release link provided by Cero.
+1. Download the Alpha 8 ZIP only from the official release link provided by Cero.
 2. Compare the ZIP checksum with `SHA256SUMS.txt`.
 3. Extract every file before opening NEXUS.
 4. Run `NEXUS.exe`.
@@ -24,6 +24,7 @@
 5. Join the 1v1 queue alone. Test 3v3 and 5v5 only with an exact-size party.
 6. Send a channel message, create or join a party, and check notifications.
 7. Restart NEXUS and confirm only one window opens and screenshot setup does not return.
+8. Open Missions and Channels, restart NEXUS, and confirm their unseen indicators remain cleared.
 
 ## Evidence privacy
 
