@@ -1,4 +1,4 @@
-# NEXUS Alpha 7.1 tester guide
+# NEXUS Alpha 7.2 tester guide
 
 ## Supported system
 
@@ -9,7 +9,7 @@
 
 ## Installation
 
-1. Download the Alpha 7.1 ZIP only from the official release link provided by Cero.
+1. Download the Alpha 7.2 ZIP only from the official release link provided by Cero.
 2. Compare the ZIP checksum with `SHA256SUMS.txt`.
 3. Extract every file before opening NEXUS.
 4. Run `NEXUS.exe`.
@@ -25,6 +25,7 @@
 6. Send a channel message, create or join a party, and check notifications.
 7. Restart NEXUS and confirm only one window opens and screenshot setup does not return.
 8. Open Missions and Channels, restart NEXUS, and confirm their unseen indicators remain cleared.
+9. As staff, confirm ordinary result submissions create no alert; dispute a result and confirm it appears under the top bell and Admin → Match Disputes.
 
 ## Evidence privacy
 
