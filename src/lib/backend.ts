@@ -40,6 +40,7 @@ export type CloudChatMember = {
   avatarUrl?: string;
   role: 'owner' | 'admin' | 'member';
   joinedAt: string;
+  timedOutUntil?: string;
 };
 
 export type CloudOnlineUser = {
@@ -341,6 +342,7 @@ export const backend = {
       avatarUrl: row.avatar_url || undefined,
       role: row.member_role,
       joinedAt: row.joined_at,
+      timedOutUntil: row.timed_out_until || undefined,
     }));
   },
 
@@ -367,6 +369,16 @@ export const backend = {
       target_user: userId,
     });
     if (error) throw error;
+  },
+
+  async timeoutChatChannelMember(channel: string, userId: string, minutes: 0 | 10 | 60 | 1440 | 10080): Promise<string | undefined> {
+    const { data, error } = await requireSupabase().rpc('timeout_chat_channel_member', {
+      target_channel: channel,
+      target_user: userId,
+      timeout_minutes: minutes,
+    });
+    if (error) throw error;
+    return data ? String(data) : undefined;
   },
 
   async deleteChatChannel(channel: string): Promise<void> {

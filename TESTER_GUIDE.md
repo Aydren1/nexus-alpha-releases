@@ -1,4 +1,4 @@
-# NEXUS Alpha 7.13 tester guide
+# NEXUS Alpha 7.14 tester guide
 
 ## Supported system
 
@@ -9,7 +9,7 @@
 
 ## Installation
 
-1. Download the Alpha 7.13 ZIP only from the public official NEXUS GitHub Releases page.
+1. Download the Alpha 7.14 ZIP only from the public official NEXUS GitHub Releases page.
 2. Compare the ZIP checksum with `SHA256SUMS.txt`.
 3. Extract every file before opening NEXUS.
 4. Run `NEXUS.exe`.
@@ -30,6 +30,8 @@
 11. Click the eligible ranked queue and confirm the card changes to CONNECTING immediately, becomes SEARCHING after cloud confirmation, and cancels without a frozen cursor.
 12. Create one personal channel and one organization channel, invite another verified RSI pilot, and confirm only members can see and use each channel.
 13. Confirm the channel owner can promote an admin, both can invite/remove ordinary members, a non-owner can leave, and the owner can delete the channel.
+14. As a channel creator, apply each timeout duration and confirm the affected member can still read the channel but cannot post. Lift the timeout, confirm posting resumes, then test Kick.
+15. Promote a channel admin and confirm they can moderate ordinary members but cannot kick or time out the creator or another admin.
 
 ## Evidence privacy
 

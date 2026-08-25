@@ -6,6 +6,7 @@ import './logo.css';
 import './capture.css';
 import './theme.css';
 import './brand-theme.css';
+import './channel-moderation.css';
 
 document.documentElement.classList.toggle('nexus-desktop', Boolean(window.nexusDesktop));
 try {

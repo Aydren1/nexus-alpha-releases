@@ -1,4 +1,4 @@
-# NEXUS 0.5.0 Alpha 7.13 — Public Test
+# NEXUS 0.5.0 Alpha 7.14 — Public Test
 
 NEXUS is an open-registration competitive matchmaking alpha for Star Citizen. Anyone with this official release link can download the app, create an account, and verify a public RSI identity without a manual invitation. NEXUS is not affiliated with or endorsed by Cloud Imperium Games.
 
@@ -7,6 +7,9 @@ NEXUS is an open-registration competitive matchmaking alpha for Star Citizen. An
 - Persistent invite-only personal and organization channels
 - Invitations by verified RSI handle, member avatars, owner/admin roles, removal, leave, and channel deletion controls
 - Per-channel database permissions so private messages and membership are visible only to authorized pilots
+- Creator-owned moderation with 10-minute, 1-hour, 24-hour, and 7-day posting timeouts
+- Delegated channel admins who can invite, kick, and time out ordinary members without authority over the creator or peer admins
+- Prominent Delete Channel controls in both the channel header and channel-control summary
 - Larger opposing fighter silhouettes designed to remain recognizable at Windows taskbar size
 - Full-canvas native Windows taskbar and application icons at 16, 24, 32, 48, 64, 128, and 256px
 - Clickable weekly and community-event cards with a live single-elimination bracket view
@@ -33,9 +36,9 @@ NEXUS is an open-registration competitive matchmaking alpha for Star Citizen. An
 
 ## Install
 
-1. Download `NEXUS-0.5.0-alpha.7.13-win-x64.zip` from this release.
+1. Download `NEXUS-0.5.0-alpha.7.14-win-x64.zip` from this release.
 2. Confirm its SHA-256 value matches `SHA256SUMS.txt`.
-3. Extract the entire ZIP into a folder you control, such as `NEXUS Alpha 7.13`.
+3. Extract the entire ZIP into a folder you control, such as `NEXUS Alpha 7.14`.
 4. Open `NEXUS.exe`. Do not run it from inside the ZIP.
 5. Because this friends build is unsigned, Windows may show **Windows protected your PC**. Confirm the download came from this release before choosing **More info → Run anyway**.
 

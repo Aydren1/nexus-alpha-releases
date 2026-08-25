@@ -4,7 +4,7 @@ $nexusRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path
 $nexusRelease = Join-Path $nexusRoot 'release'
 $nexusPackagedPathMarker = Join-Path $nexusRelease '.nexus-packaged-app-path'
 $nexusApp = if (Test-Path -LiteralPath $nexusPackagedPathMarker) { (Get-Content -LiteralPath $nexusPackagedPathMarker -Raw).Trim() } else { Join-Path $nexusRelease 'NEXUS-win32-x64' }
-$nexusZip = Join-Path $nexusRelease 'NEXUS-0.5.0-alpha.7.13-win-x64.zip'
+$nexusZip = Join-Path $nexusRelease 'NEXUS-0.5.0-alpha.7.14-win-x64.zip'
 $nexusDocs = Join-Path $nexusRoot 'alpha-release'
 $nexusChecksum = Join-Path $nexusRelease 'SHA256SUMS.txt'
 

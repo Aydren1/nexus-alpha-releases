@@ -45,8 +45,8 @@ Copy-Item -LiteralPath (Join-Path $nexusRoot 'scripts\package-template.json') -D
 
 try {
     # Windows executable resources accept at most four numeric components. Keep the
-    # user-facing semver (0.5.0-alpha.7.13) in package.json and map it to 0.5.7.13 here.
-    & $nexusPackager $nexusStage NEXUS --platform=win32 --arch=x64 --out=$nexusOutput --overwrite --prune=false --asar --icon=$nexusIcon --app-version=0.5.7.13 --build-version=0.5.7.13
+    # user-facing semver (0.5.0-alpha.7.14) in package.json and map it to 0.5.7.14 here.
+    & $nexusPackager $nexusStage NEXUS --platform=win32 --arch=x64 --out=$nexusOutput --overwrite --prune=false --asar --icon=$nexusIcon --app-version=0.5.7.14 --build-version=0.5.7.14
     if ($LASTEXITCODE -ne 0) { throw 'Electron packaging failed.' }
 
     $packagedApp = Join-Path $nexusOutput 'NEXUS-win32-x64'

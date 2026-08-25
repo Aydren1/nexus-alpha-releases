@@ -10,7 +10,7 @@ This repository can connect to a Supabase project through the public project URL
 - Edge Functions deployed: `health` and `verify-rsi`
 - Public health check validated on August 20, 2026
 - Desktop client connected through the public publishable key; no database password or privileged key is bundled
-- Portable Windows x64 build: `release/NEXUS-0.5.0-alpha.7.13-win-x64.zip`
+- Portable Windows x64 build: `release/NEXUS-0.5.0-alpha.7.14-win-x64.zip`
 - Exact 1/3/5-pilot ranked queue enforcement deployed to the live database on August 23, 2026
 
 ## What the alpha backend provides

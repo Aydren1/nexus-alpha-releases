@@ -1,4 +1,4 @@
-# NEXUS Alpha 7.13 known issues
+# NEXUS Alpha 7.14 known issues
 
 - This friends build is unsigned and may trigger Microsoft Defender SmartScreen or Smart App Control.
 - Direct messages remain device-local during this phase of the alpha.
