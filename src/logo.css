@@ -1,0 +1,34 @@
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  clip-path: none;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+/* The signed-in sidebar gets the largest, highest-clarity brand treatment. */
+.rail > .brand {
+  gap: 8px;
+  height: 88px;
+  flex: 0 0 88px;
+  padding-inline: 10px;
+}
+
+.rail > .brand .brand-mark {
+  width: 72px;
+  height: 72px;
+  transform: translateY(-4px);
+}
+
+.rail > .brand > span:last-child {
+  transform: translate(-2px, -3px);
+}

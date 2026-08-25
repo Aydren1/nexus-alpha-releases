@@ -1,0 +1,8 @@
+{
+  "name": "starladder-sc-competitive",
+  "productName": "STARLADDER",
+  "version": "0.5.0-alpha.8.0",
+  "description": "Windows-first competitive platform for Star Citizen",
+  "private": true,
+  "main": "electron/main.cjs"
+}

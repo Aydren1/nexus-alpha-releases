@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible STARLADDER alpha problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Never include passwords, access tokens, private messages, or screenshots containing personal information.
+  - type: input
+    id: version
+    attributes:
+      label: STARLADDER version
+      placeholder: 0.5.0-alpha.8.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Explain the observed and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: "1. Open...\n2. Select...\n3. Observe..."
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Windows desktop application
+        - Web application
+        - Supabase/backend
+    validations:
+      required: true

@@ -1,0 +1,126 @@
+.channel-head-actions .channel-delete-head {
+  width: auto;
+  padding: 0 10px;
+  display: flex;
+  gap: 6px;
+  color: #ff8b78;
+  background: #241513;
+  border: 1px solid #63372f;
+  font: 700 7px Inter;
+  letter-spacing: .8px;
+}
+
+.channel-delete-head:hover,
+.channel-delete-prominent:hover {
+  color: #fff;
+  border-color: #ff725f;
+  background: #52221c;
+}
+
+.channel-summary-prominent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.channel-summary-prominent > div {
+  min-width: 0;
+}
+
+.channel-delete-prominent {
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ff8b78;
+  background: #241513;
+  border: 1px solid #63372f;
+  font: 700 7px Inter;
+  letter-spacing: .8px;
+}
+
+.channel-permission-note {
+  min-height: 58px;
+  margin: 12px 0 4px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cyan);
+  background: #0d1d22;
+  border: 1px solid #27434b;
+}
+
+.channel-permission-note span {
+  flex: 1;
+}
+
+.channel-permission-note b,
+.channel-permission-note small {
+  display: block;
+}
+
+.channel-permission-note b {
+  font-size: 8px;
+  letter-spacing: .8px;
+}
+
+.channel-permission-note small {
+  margin-top: 4px;
+  color: #718188;
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+.moderation-member-list > div {
+  min-height: 66px;
+}
+
+.channel-member-identity {
+  min-width: 125px;
+}
+
+.channel-member-controls {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.channel-member-controls select {
+  height: 28px;
+  max-width: 106px;
+  padding: 0 7px;
+  color: #efc478;
+  background: #211b11;
+  border: 1px solid #5d4b28;
+  outline: 0;
+  font: 700 6px Inter;
+  letter-spacing: .5px;
+}
+
+.channel-member-controls .permission {
+  color: #8fe9fb;
+  background: #12242a;
+}
+
+.channel-member-controls .kick {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ff8b78;
+  background: #281614;
+  border: 1px solid #563029;
+}
+
+.channel-member-controls button:disabled,
+.channel-member-controls select:disabled,
+.channel-delete-head:disabled,
+.channel-delete-prominent:disabled {
+  opacity: .45;
+}
+
+.theme-night :is(.channel-permission-note,.channel-member-controls select,.channel-delete-head,.channel-delete-prominent) {
+  background: #000 !important;
+}
