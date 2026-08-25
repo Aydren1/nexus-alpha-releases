@@ -1,6 +1,6 @@
 # NEXUS
 
-Windows-first competitive matchmaking and tournament client for Star Citizen. Version `0.5.0-alpha.7.12` enlarges both opposing fighters by roughly 45% so they remain recognizable in the native multi-resolution Windows taskbar icon. It retains live tournament brackets plus separate Ranked and Unranked matchmaking pools for 1v1, 3v3, and 5v5.
+Windows-first competitive matchmaking and tournament client for Star Citizen. Version `0.5.0-alpha.7.13` adds persistent invite-only personal and organization channels with owner/admin member controls, verified-RSI invitations, avatars, and realtime chat. It retains live tournament brackets plus separate Ranked and Unranked matchmaking pools for 1v1, 3v3, and 5v5.
 
 [Download the current alpha](../../releases) · [Report a bug](../../issues) · [Security policy](./SECURITY.md)
 

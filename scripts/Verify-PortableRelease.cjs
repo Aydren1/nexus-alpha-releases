@@ -22,7 +22,7 @@ if (files.some((file) => /(^|\/)\.env(?:\.|$)/.test(file))) throw new Error('An 
 const packageJson = JSON.parse(asar.extractFile(asarPath, 'package.json').toString('utf8'));
 const main = asar.extractFile(asarPath, 'electron/main.cjs').toString('utf8');
 const preload = asar.extractFile(asarPath, 'electron/preload.cjs').toString('utf8');
-if (packageJson.version !== '0.5.0-alpha.7.12') throw new Error(`Unexpected packaged version: ${packageJson.version}`);
+if (packageJson.version !== '0.5.0-alpha.7.13') throw new Error(`Unexpected packaged version: ${packageJson.version}`);
 if (!main.includes('nexus.ico')) throw new Error('Native Windows icon integration is missing.');
 for (const marker of ['frame: false', 'window-toggle-maximize', 'window-minimize', 'window-close']) {
   if (!main.includes(marker) && !preload.includes(marker)) throw new Error(`Custom title bar marker is missing: ${marker}`);

@@ -7,9 +7,9 @@ import {
   MessageSquare, Orbit, Play, Radio, Search,
   Settings, ShieldCheck, Swords, Target, Trophy, UserPlus,
   Users, UsersRound, X, Zap, Send, Upload, Trash2, LogOut,
-  Camera, FolderOpen, Keyboard, Image as ImageIcon, LoaderCircle, Maximize2, Minimize2, Minus, UserRound,
+  Camera, FolderOpen, Keyboard, Image as ImageIcon, LoaderCircle, Maximize2, Minimize2, Minus, UserRound, Plus, UserMinus,
 } from 'lucide-react';
-import { backend, type CloudAdminUser, type CloudBracketEntrant, type CloudBracketSnapshot, type CloudCommunityEvent, type CloudLeaderboardRow, type CloudMatchDispute, type CloudMatchSummary, type CloudNotification, type CloudOnlineUser, type CloudParty, type CloudRatingRow, type PlatformAccess } from './lib/backend';
+import { backend, type CloudAdminUser, type CloudBracketEntrant, type CloudBracketSnapshot, type CloudChatChannel, type CloudChatMember, type CloudCommunityEvent, type CloudLeaderboardRow, type CloudMatchDispute, type CloudMatchSummary, type CloudNotification, type CloudOnlineUser, type CloudParty, type CloudRatingRow, type PlatformAccess } from './lib/backend';
 
 type Page = 'Play' | 'Matches' | 'Tournaments' | 'Rankings' | 'Organizations' | 'Missions' | 'Admin';
 type ThemeMode = 'standard' | 'night';
@@ -29,6 +29,12 @@ type BracketEventRef = {
   bracketSize: number; region: string; startsAt: string; prizePool?: string; creatorHandle?: string; description?: string;
 };
 type PanelState = { mode: PanelMode; title?: string; event?: BracketEventRef };
+
+const publicChatChannels: CloudChatChannel[] = [
+  { key: 'general', name: 'general', kind: 'public', memberCount: 0 },
+  { key: 'looking-for-crew', name: 'looking-for-crew', kind: 'public', memberCount: 0 },
+  { key: 'tournament-lounge', name: 'tournament-lounge', kind: 'public', memberCount: 0 },
+];
 
 const queues = [
   { id: 'duel', name: 'Arena Commander Duel', mode: '1v1 · Duel', region: 'US East', rating: 'Ranked', accent: 'cyan' },
@@ -191,6 +197,7 @@ function NexusApp({ account, onAccountUpdate, onLogout }: { account: Account; on
   const [platformAccess, setPlatformAccess] = useState<PlatformAccess>({role:null,banned:false});
   const [platformAccessLoaded, setPlatformAccessLoaded] = useState(!backend.enabled);
   const [onlineUsers, setOnlineUsers] = useState<CloudOnlineUser[]>([]);
+  const [chatChannels, setChatChannels] = useState<CloudChatChannel[]>(publicChatChannels);
   const [partyOpen, setPartyOpen] = useState(false);
   const [partyMembers, setPartyMembersState] = useState<PartyMember[]>(() => {
     if (backend.enabled) return [{handle:account.handle,rating:1500,ready:true,leader:true,avatarDataUrl:account.avatarDataUrl}];
@@ -237,6 +244,11 @@ function NexusApp({ account, onAccountUpdate, onLogout }: { account: Account; on
   const openChat = (channel: string) => {
     if (!channel.startsWith('dm:')) markSectionSeen('channels');
     setChatChannel(channel);
+  };
+  const refreshChatChannels = async () => {
+    if (!backend.enabled) { setChatChannels(publicChatChannels); return; }
+    const channels = await backend.listChatChannels();
+    setChatChannels(channels.length ? channels : publicChatChannels);
   };
   const setTheme = (nextTheme: ThemeMode) => {
     setThemeState(nextTheme);
@@ -320,6 +332,14 @@ function NexusApp({ account, onAccountUpdate, onLogout }: { account: Account; on
       else void backend.unsubscribe(channel);
     });
     return()=>{active=false;setOnlineUsers([]);void backend.unsubscribe(presenceChannel)};
+  },[account.handle,platformAccessLoaded,platformAccess.banned]);
+  useEffect(()=>{
+    if(!backend.enabled||!platformAccessLoaded||platformAccess.banned)return;
+    let active=true;
+    const refresh=()=>refreshChatChannels().catch(error=>{if(active)notify(backendErrorMessage(error,'Channels could not be loaded.'))});
+    void refresh();
+    const subscription=backend.subscribeChatChannels(refresh);
+    return()=>{active=false;void backend.unsubscribe(subscription)};
   },[account.handle,platformAccessLoaded,platformAccess.banned]);
   useEffect(()=>{
     if(!backend.enabled||!window.nexusDesktop||!backgroundChatNotifications||platformAccess.banned)return;
@@ -460,10 +480,10 @@ function NexusApp({ account, onAccountUpdate, onLogout }: { account: Account; on
         </div>
       </main>
 
-      <SocialRail accountHandle={account.handle} onlineUsers={onlineUsers} notify={notify} onOpenChat={openChat} onOpenParty={() => setPartyOpen(true)} onSearch={()=>setPanel({mode:'search'})} partySize={partyMembers.length} />
+      <SocialRail accountHandle={account.handle} onlineUsers={onlineUsers} channels={chatChannels} notify={notify} onOpenChat={openChat} onOpenParty={() => setPartyOpen(true)} onSearch={()=>setPanel({mode:'search'})} partySize={partyMembers.length} />
       {partyOpen && <PartyDrawer account={account} selectedQueue={selectedQueue} matchmakingMode={matchmakingMode} members={partyMembers} setMembers={setPartyMembers} setQueued={setQueued} setQueueStartedAt={setQueueStartedAt} close={() => setPartyOpen(false)} notify={notify} />}
       {profileOpen && <ProfileDrawer account={account} close={() => setProfileOpen(false)} save={onAccountUpdate} onLogout={onLogout} notify={notify} />}
-      {chatChannel && <ChatDrawer account={account} onlineUsers={onlineUsers} channel={chatChannel} setChannel={openChat} close={() => setChatChannel(null)} />}
+      {chatChannel && <ChatDrawer account={account} onlineUsers={onlineUsers} channels={chatChannels} channel={chatChannel} setChannel={openChat} refreshChannels={refreshChatChannels} close={() => setChatChannel(null)} notify={notify} />}
       {evidenceOpen && <EvidenceDrawer matchId="" close={()=>setEvidenceOpen(false)} notify={notify} reconfigure={()=>{localStorage.removeItem('nexus-capture-setup-v1');setEvidenceOpen(false);setCaptureSetupComplete(false)}} />}
       {panel && <UtilityPanel panel={panel} account={account} access={platformAccess} selectedQueue={selectedQueue} members={partyMembers} setPage={setPage} close={()=>setPanel(null)} notify={notify} theme={theme} setTheme={setTheme} fontScale={fontScale} setFontScale={setFontScale} backgroundChatNotifications={backgroundChatNotifications} setBackgroundChatNotifications={setBackgroundChatNotifications} onCommunityEventCreated={()=>setCommunityEventRevision(value=>value+1)} hasUnreadNotifications={hasUnreadNotifications} cloudNotifications={cloudNotifications} markNotificationsRead={markNotificationsRead} />}
       {toast && <div className="toast"><ShieldCheck size={18} />{toast}</div>}
@@ -691,7 +711,7 @@ function AuthFlow({ onComplete }: { onComplete: (account: Account) => void }) {
         <div className="verify-note"><Info size={14}/><p>Your password is never shared with RSI. NEXUS only reads the public Citizen Dossier at <b>/citizens/{handle || 'YourHandle'}</b>. You can remove the code after verification.</p></div>
       </>}
     </section>
-    <footer className="auth-footer"><span>NEXUS ALPHA 7.12</span><span>SYSTEM STATUS <i/> OPERATIONAL</span></footer>
+    <footer className="auth-footer"><span>NEXUS ALPHA 7.13</span><span>SYSTEM STATUS <i/> OPERATIONAL</span></footer>
   </div>;
 }
 
@@ -939,11 +959,17 @@ function OrganizationsPage(){return <div className="standard-page"><PageTitle ey
 
 function MissionsPage(){return <div className="standard-page"><PageTitle eyebrow="ALPHA SYSTEM" title="MISSIONS" description="Season missions will activate after their progression rules are connected to verified match results."/><section className="panel alpha-feature-state"><LiveEmpty icon={<Target/>} title="NO LIVE MISSIONS CONFIGURED" detail="NEXUS will never show fabricated progress. Real objectives and rewards will appear here when the mission service launches."/></section></div>}
 
-function SocialRail({accountHandle,onlineUsers,notify,onOpenChat,onOpenParty,onSearch,partySize}:{accountHandle:string;onlineUsers:CloudOnlineUser[];notify:(s:string)=>void;onOpenChat:(channel:string)=>void;onOpenParty:()=>void;onSearch:()=>void;partySize:number}) {
+function SocialRail({accountHandle,onlineUsers,channels,notify,onOpenChat,onOpenParty,onSearch,partySize}:{accountHandle:string;onlineUsers:CloudOnlineUser[];channels:CloudChatChannel[];notify:(s:string)=>void;onOpenChat:(channel:string)=>void;onOpenParty:()=>void;onSearch:()=>void;partySize:number}) {
   const users=onlineUsers;
-  return <aside className="social-rail"><div className="social-head"><b>SOCIAL</b><button onClick={onSearch}><UserPlus size={16}/></button></div><button className="party-card" onClick={onOpenParty}><span><Headphones size={17}/></span><div><b>YOUR PARTY</b><small>{partySize} / 5 members</small></div><ChevronRight size={16}/></button><div className="social-section"><span>ONLINE — {users.length}</span>{users.length===0?<div className="online-empty">NO PILOTS ONLINE</div>:users.map(user=><button className="friend" key={user.userId} onClick={()=>user.handle===accountHandle?notify('This is your online presence.'):onOpenChat(`dm:${user.handle}`)}><span className={`avatar ${user.avatarUrl?'custom-avatar':''}`}>{user.avatarUrl?<img src={user.avatarUrl} alt={`${user.handle} avatar`}/>:user.handle.slice(0,2).toUpperCase()}<i/></span><div><b>{user.handle}</b><small>{user.handle===accountHandle?'You · Online':'Online'}</small></div></button>)}</div><div className="social-section channels"><span>CHANNELS</span><button onClick={()=>onOpenChat('general')}><i className="hash">#</i> general</button><button onClick={()=>onOpenChat('looking-for-crew')}><i className="hash">#</i> looking-for-crew</button><button onClick={()=>onOpenChat('tournament-lounge')}><i className="hash">#</i> tournament-lounge</button></div><div className="voice-bar"><MessageSquare size={16}/><div><b>TEXT COMMS READY</b><small>Shared channels connected</small></div><Radio size={17}/></div></aside>
+  const visibleChannels=channels.slice(0,6);
+  return <aside className="social-rail">
+    <div className="social-head"><b>SOCIAL</b><button onClick={onSearch}><UserPlus size={16}/></button></div>
+    <button className="party-card" onClick={onOpenParty}><span><Headphones size={17}/></span><div><b>YOUR PARTY</b><small>{partySize} / 5 members</small></div><ChevronRight size={16}/></button>
+    <div className="social-section"><span>ONLINE — {users.length}</span>{users.length===0?<div className="online-empty">NO PILOTS ONLINE</div>:users.map(user=><button className="friend" key={user.userId} onClick={()=>user.handle===accountHandle?notify('This is your online presence.'):onOpenChat(`dm:${user.handle}`)}><span className={`avatar ${user.avatarUrl?'custom-avatar':''}`}>{user.avatarUrl?<img src={user.avatarUrl} alt={`${user.handle} avatar`}/>:user.handle.slice(0,2).toUpperCase()}<i/></span><div><b>{user.handle}</b><small>{user.handle===accountHandle?'You · Online':'Online'}</small></div></button>)}</div>
+    <div className="social-section channels"><span className="channel-section-head"><i>CHANNELS</i><button onClick={()=>onOpenChat('channels:new')} aria-label="Create channel"><Plus size={13}/></button></span>{visibleChannels.map(item=><button key={item.key} onClick={()=>onOpenChat(item.key)} title={item.organizationName||item.name}><i className="hash">{item.kind==='public'?'#':item.kind==='organization'?'◈':'◇'}</i><span>{item.name}</span>{item.kind!=='public'&&<b>{item.memberCount}</b>}</button>)}{channels.length>visibleChannels.length&&<button className="more-channels" onClick={()=>onOpenChat(channels[visibleChannels.length].key)}>+ {channels.length-visibleChannels.length} MORE</button>}</div>
+    <div className="voice-bar"><MessageSquare size={16}/><div><b>TEXT COMMS READY</b><small>{channels.length} accessible channel{channels.length===1?'':'s'}</small></div><Radio size={17}/></div>
+  </aside>;
 }
-
 function PartyDrawer({account,selectedQueue,matchmakingMode,members,setMembers,setQueued,setQueueStartedAt,close,notify}:{account:Account;selectedQueue:typeof queues[number];matchmakingMode:MatchmakingMode;members:PartyMember[];setMembers:(members:PartyMember[])=>void;setQueued:(queued:boolean)=>void;setQueueStartedAt:(value:number|null)=>void;close:()=>void;notify:(s:string)=>void}){
   const [inviteOpen,setInviteOpen]=useState(false);
   const [partyId,setPartyId]=useState('');
@@ -1007,13 +1033,25 @@ function ProfileDrawer({account,close,save,onLogout,notify}:{account:Account;clo
   </aside></div>;
 }
 
-function ChatDrawer({account,onlineUsers,channel,setChannel,close}:{account:Account;onlineUsers:CloudOnlineUser[];channel:string;setChannel:(channel:string)=>void;close:()=>void}) {
+function ChatDrawer({account,onlineUsers,channels,channel,setChannel,refreshChannels,close,notify}:{account:Account;onlineUsers:CloudOnlineUser[];channels:CloudChatChannel[];channel:string;setChannel:(channel:string)=>void;refreshChannels:()=>Promise<void>;close:()=>void;notify:(message:string)=>void}) {
   const [messages,setMessages]=useState<ChatMessage[]>(()=>{try{return JSON.parse(localStorage.getItem('nexus-chat-messages')||'[]')}catch{return[]}});
   const [draft,setDraft]=useState('');
   const [chatError,setChatError]=useState('');
-  const peerHandle=channel.startsWith('dm:')?channel.slice(3):'';
+  const [view,setView]=useState<'chat'|'create'|'members'>(()=>channel==='channels:new'?'create':'chat');
+  const [newName,setNewName]=useState('');
+  const [newKind,setNewKind]=useState<'personal'|'organization'>('personal');
+  const [organizationName,setOrganizationName]=useState('');
+  const [members,setMembers]=useState<CloudChatMember[]>([]);
+  const [inviteHandle,setInviteHandle]=useState('');
+  const [busy,setBusy]=useState(false);
+  const isDirectMessage=channel.startsWith('dm:');
+  const selectedChannel=channels.find(item=>item.key===channel);
+  const peerHandle=isDirectMessage?channel.slice(3):'';
   const [peerAvatar,setPeerAvatar]=useState<string|undefined>(()=>onlineUsers.find(user=>user.handle===peerHandle)?.avatarUrl);
-  const sharedChannel=backend.enabled&&!channel.startsWith('dm:');
+  const sharedChannel=backend.enabled&&!isDirectMessage&&channel!=='channels:new';
+  const canManage=selectedChannel?.role==='owner'||selectedChannel?.role==='admin';
+
+  useEffect(()=>{setView(channel==='channels:new'?'create':'chat');setChatError('')},[channel]);
   useEffect(()=>{
     if(!peerHandle){setPeerAvatar(undefined);return}
     let active=true;
@@ -1025,16 +1063,69 @@ function ChatDrawer({account,onlineUsers,channel,setChannel,close}:{account:Acco
   useEffect(()=>{
     if(!sharedChannel)return;
     let active=true;
-    const refresh=()=>backend.listChat(channel).then(next=>{if(active)setMessages(next)}).catch(error=>{if(active)setChatError(error instanceof Error?error.message:'Chat is temporarily unavailable.')});
+    const refresh=()=>backend.listChat(channel).then(next=>{if(active){setMessages(next);setChatError('')}}).catch(error=>{if(active)setChatError(backendErrorMessage(error,'Chat is temporarily unavailable.'))});
     void refresh();
     const subscription=backend.subscribeChat(channel,refresh);
     return()=>{active=false;void backend.unsubscribe(subscription)};
   },[channel,sharedChannel]);
+
+  const loadMembers=async()=>{
+    if(!selectedChannel||selectedChannel.kind==='public')return;
+    setBusy(true);setChatError('');
+    try{setMembers(await backend.listChatChannelMembers(selectedChannel.key));setView('members')}
+    catch(error){setChatError(backendErrorMessage(error,'Channel members could not be loaded.'))}
+    finally{setBusy(false)}
+  };
+  const createChannel=async(event:React.FormEvent)=>{
+    event.preventDefault();
+    if(!backend.enabled){setChatError('Connect the alpha backend before creating a shared private channel.');return}
+    setBusy(true);setChatError('');
+    try{
+      const key=await backend.createChatChannel(newName.trim(),newKind,newKind==='organization'?organizationName.trim():undefined);
+      await refreshChannels();
+      notify(`${newKind==='organization'?'Organization':'Personal'} channel created.`);
+      setChannel(key);
+    }catch(error){setChatError(backendErrorMessage(error,'The channel could not be created.'))}
+    finally{setBusy(false)}
+  };
+  const inviteMember=async(event:React.FormEvent)=>{
+    event.preventDefault();if(!selectedChannel||!inviteHandle.trim())return;
+    setBusy(true);setChatError('');
+    try{await backend.inviteChatChannelMember(selectedChannel.key,inviteHandle.trim());setInviteHandle('');setMembers(await backend.listChatChannelMembers(selectedChannel.key));await refreshChannels();notify('Pilot added to the channel and notified.')}
+    catch(error){setChatError(backendErrorMessage(error,'The pilot could not be invited.'))}
+    finally{setBusy(false)}
+  };
+  const changeRole=async(member:CloudChatMember)=>{
+    if(!selectedChannel)return;setBusy(true);setChatError('');
+    try{await backend.setChatChannelMemberRole(selectedChannel.key,member.userId,member.role==='admin'?'member':'admin');setMembers(await backend.listChatChannelMembers(selectedChannel.key));notify(`${member.handle} is now ${member.role==='admin'?'a member':'a channel admin'}.`)}
+    catch(error){setChatError(backendErrorMessage(error,'The member role could not be changed.'))}
+    finally{setBusy(false)}
+  };
+  const removeMember=async(member:CloudChatMember)=>{
+    if(!selectedChannel)return;setBusy(true);setChatError('');
+    try{await backend.removeChatChannelMember(selectedChannel.key,member.userId);setMembers(await backend.listChatChannelMembers(selectedChannel.key));await refreshChannels();notify(`${member.handle} was removed from the channel.`)}
+    catch(error){setChatError(backendErrorMessage(error,'The pilot could not be removed.'))}
+    finally{setBusy(false)}
+  };
+  const leaveChannel=async()=>{
+    if(!selectedChannel)return;const self=members.find(member=>member.handle.toLowerCase()===account.handle.toLowerCase());if(!self)return;
+    setBusy(true);setChatError('');
+    try{await backend.removeChatChannelMember(selectedChannel.key,self.userId);await refreshChannels();notify(`You left #${selectedChannel.name}.`);setChannel('general')}
+    catch(error){setChatError(backendErrorMessage(error,'The channel could not be left.'))}
+    finally{setBusy(false)}
+  };
+  const deleteChannel=async()=>{
+    if(!selectedChannel||!window.confirm(`Delete #${selectedChannel.name} and all of its messages? This cannot be undone.`))return;
+    setBusy(true);setChatError('');
+    try{await backend.deleteChatChannel(selectedChannel.key);await refreshChannels();notify(`#${selectedChannel.name} was deleted.`);setChannel('general')}
+    catch(error){setChatError(backendErrorMessage(error,'The channel could not be deleted.'))}
+    finally{setBusy(false)}
+  };
   const commitMessage=async()=>{
     const text=draft.trim();if(!text)return;
     if(sharedChannel){
       setDraft('');setChatError('');
-      try{await backend.sendChat(channel,text);setMessages(await backend.listChat(channel))}catch(error){setDraft(text);setChatError(error instanceof Error?error.message:'Message could not be sent.')}
+      try{await backend.sendChat(channel,text);setMessages(await backend.listChat(channel))}catch(error){setDraft(text);setChatError(backendErrorMessage(error,'Message could not be sent.'))}
       return;
     }
     const next=[...messages,{id:crypto.randomUUID(),channel,author:account.handle,avatarUrl:account.avatarDataUrl,text:text.slice(0,500),at:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}];
@@ -1042,13 +1133,11 @@ function ChatDrawer({account,onlineUsers,channel,setChannel,close}:{account:Acco
   };
   const sendMessage=(event:React.FormEvent)=>{event.preventDefault();void commitMessage()};
   const visible=messages.filter(message=>message.channel===channel);
-  const title=channel.startsWith('dm:')?channel.slice(3):`# ${channel}`;
-  return <div className="drawer-backdrop chat-backdrop" onMouseDown={close}><aside className="chat-drawer" onMouseDown={e=>e.stopPropagation()}>
-    <div className="drawer-head"><div><span className="eyebrow">NEXUS COMMS</span><h2>{title}</h2></div><button onClick={close}><X/></button></div>
-    {!channel.startsWith('dm:')&&<div className="chat-channel-tabs">{['general','looking-for-crew','tournament-lounge'].map(item=><button className={channel===item?'active':''} key={item} onClick={()=>setChannel(item)}># {item}</button>)}</div>}
-    <div className="chat-messages">{visible.length===0?<div className="chat-empty">{peerHandle&&<span className={`avatar dm-avatar ${peerAvatar?'custom-avatar':''}`}>{peerAvatar?<img src={peerAvatar} alt={`${peerHandle} avatar`}/>:peerHandle.slice(0,2).toUpperCase()}</span>}<MessageSquare/><b>NO TRANSMISSIONS YET</b><span>Start the conversation.</span></div>:visible.map(message=>{const avatarUrl=message.author===account.handle?account.avatarDataUrl||message.avatarUrl:message.avatarUrl||(message.author.toLowerCase()===peerHandle.toLowerCase()?peerAvatar:onlineUsers.find(user=>user.handle.toLowerCase()===message.author.toLowerCase())?.avatarUrl);return <div className={`chat-message ${message.author===account.handle?'mine':''}`} key={message.id}><span className={`avatar ${avatarUrl?'custom-avatar':''}`}>{avatarUrl?<img src={avatarUrl} alt={`${message.author} avatar`}/>:message.author.slice(0,2).toUpperCase()}</span><div><p><b>{message.author}</b><time>{message.at}</time></p><span>{message.text}</span></div></div>})}</div>
-    {chatError&&<div className="chat-error"><AlertTriangle size={13}/>{chatError}</div>}
-    <form className="chat-compose" onSubmit={sendMessage}><input value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void commitMessage()}}} maxLength={500} autoFocus placeholder={`Message ${title}`}/><button type="submit" disabled={!draft.trim()}><Send size={17}/></button></form>
+  const title=isDirectMessage?peerHandle:selectedChannel?`# ${selectedChannel.name}`:'CHANNELS';
+  return <div className="drawer-backdrop chat-backdrop" onMouseDown={close}><aside className="chat-drawer channel-drawer" onMouseDown={event=>event.stopPropagation()}>
+    <div className="drawer-head"><div><span className="eyebrow">NEXUS COMMS</span><h2>{view==='create'?'CREATE CHANNEL':view==='members'?'CHANNEL CREW':title}</h2>{selectedChannel?.organizationName&&view!=='create'&&<small className="channel-org-label">{selectedChannel.organizationName}</small>}</div><div className="channel-head-actions">{selectedChannel&&selectedChannel.kind!=='public'&&view==='chat'&&<button onClick={()=>void loadMembers()} aria-label="Manage channel members"><UsersRound size={18}/></button>}<button onClick={close}><X/></button></div></div>
+    {!isDirectMessage&&<div className="chat-channel-tabs">{channels.map(item=><button className={channel===item.key&&view==='chat'?'active':''} key={item.key} onClick={()=>setChannel(item.key)} title={item.organizationName||item.name}>{item.kind==='organization'?'◈ ':item.kind==='personal'?'◇ ':'# '}{item.name}</button>)}<button className={view==='create'?'active channel-add-tab':'channel-add-tab'} onClick={()=>setView('create')}><Plus size={12}/> NEW</button></div>}
+    {view==='create'?<form className="channel-create-form" onSubmit={createChannel}><div className="channel-form-intro"><Plus/><b>OPEN A PRIVATE COMMS CHANNEL</b><span>Invite verified RSI pilots after creation. Only members can discover or read it.</span></div><label>CHANNEL NAME<input value={newName} onChange={event=>setNewName(event.target.value)} maxLength={48} placeholder="Squad tactics" autoFocus/></label><div className="channel-kind-grid"><button type="button" className={newKind==='personal'?'active':''} onClick={()=>setNewKind('personal')}><UserRound/><b>PERSONAL</b><span>Your private invite-only space.</span></button><button type="button" className={newKind==='organization'?'active':''} onClick={()=>setNewKind('organization')}><UsersRound/><b>ORGANIZATION</b><span>A member channel branded for your org.</span></button></div>{newKind==='organization'&&<label>ORGANIZATION NAME<input value={organizationName} onChange={event=>setOrganizationName(event.target.value)} maxLength={60} placeholder="Your Star Citizen organization"/></label>}{chatError&&<div className="chat-error"><AlertTriangle size={13}/>{chatError}</div>}<button className="primary wide" type="submit" disabled={busy||newName.trim().length<3||(newKind==='organization'&&organizationName.trim().length<2)}>{busy?'CREATING...':'CREATE CHANNEL'}</button></form>:view==='members'&&selectedChannel?<div className="channel-members-view"><button className="channel-back" onClick={()=>setView('chat')}><ChevronRight size={14}/> BACK TO CHANNEL</button><div className="channel-summary"><span className="eyebrow">{selectedChannel.kind==='organization'?'ORGANIZATION CHANNEL':'PERSONAL CHANNEL'}</span><h3># {selectedChannel.name}</h3><p>{selectedChannel.organizationName||'Invite-only NEXUS comms'} · {members.length} member{members.length===1?'':'s'}</p></div>{canManage&&<form className="channel-invite-form" onSubmit={inviteMember}><input value={inviteHandle} onChange={event=>setInviteHandle(event.target.value)} placeholder="Verified RSI handle"/><button disabled={busy||!inviteHandle.trim()}><UserPlus size={14}/> INVITE</button></form>}<div className="channel-member-list">{members.map(member=><div key={member.userId}><span className={`avatar ${member.avatarUrl?'custom-avatar':''}`}>{member.avatarUrl?<img src={member.avatarUrl} alt={`${member.handle} avatar`}/>:member.handle.slice(0,2).toUpperCase()}</span><span><b>{member.handle}</b><small>{member.role.toUpperCase()}</small></span><div>{selectedChannel.role==='owner'&&member.role!=='owner'&&<button onClick={()=>void changeRole(member)} disabled={busy}>{member.role==='admin'?'DEMOTE':'MAKE ADMIN'}</button>}{canManage&&member.role!=='owner'&&member.handle.toLowerCase()!==account.handle.toLowerCase()&&<button className="remove" onClick={()=>void removeMember(member)} disabled={busy} aria-label={`Remove ${member.handle}`}><UserMinus size={14}/></button>}</div></div>)}</div>{chatError&&<div className="chat-error"><AlertTriangle size={13}/>{chatError}</div>}<div className="channel-danger-actions">{selectedChannel.role==='owner'?<button onClick={()=>void deleteChannel()} disabled={busy}><Trash2 size={14}/> DELETE CHANNEL</button>:<button onClick={()=>void leaveChannel()} disabled={busy}><LogOut size={14}/> LEAVE CHANNEL</button>}</div></div>:<><div className="chat-messages">{visible.length===0?<div className="chat-empty">{peerHandle&&<span className={`avatar dm-avatar ${peerAvatar?'custom-avatar':''}`}>{peerAvatar?<img src={peerAvatar} alt={`${peerHandle} avatar`}/>:peerHandle.slice(0,2).toUpperCase()}</span>}<MessageSquare/><b>NO TRANSMISSIONS YET</b><span>Start the conversation.</span></div>:visible.map(message=>{const avatarUrl=message.author===account.handle?account.avatarDataUrl||message.avatarUrl:message.avatarUrl||(message.author.toLowerCase()===peerHandle.toLowerCase()?peerAvatar:onlineUsers.find(user=>user.handle.toLowerCase()===message.author.toLowerCase())?.avatarUrl);return <div className={`chat-message ${message.author===account.handle?'mine':''}`} key={message.id}><span className={`avatar ${avatarUrl?'custom-avatar':''}`}>{avatarUrl?<img src={avatarUrl} alt={`${message.author} avatar`}/>:message.author.slice(0,2).toUpperCase()}</span><div><p><b>{message.author}</b><time>{message.at}</time></p><span>{message.text}</span></div></div>})}</div>{chatError&&<div className="chat-error"><AlertTriangle size={13}/>{chatError}</div>}<form className="chat-compose" onSubmit={sendMessage}><input value={draft} onChange={event=>setDraft(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();void commitMessage()}}} maxLength={500} autoFocus placeholder={`Message ${title}`}/><button type="submit" disabled={!draft.trim()}><Send size={17}/></button></form></>}
   </aside></div>;
 }
 

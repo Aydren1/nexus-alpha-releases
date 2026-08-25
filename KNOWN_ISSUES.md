@@ -1,7 +1,8 @@
-# NEXUS Alpha 7.12 known issues
+# NEXUS Alpha 7.13 known issues
 
 - This friends build is unsigned and may trigger Microsoft Defender SmartScreen or Smart App Control.
 - Direct messages remain device-local during this phase of the alpha.
+- Organization channels carry an organization name and private roster, but full organization ownership verification and shared organization rosters are planned for a later alpha.
 - Match-room result submission and moderator evidence review are not fully connected to server endpoints.
 - Screenshot evidence remains local and is not automatically uploaded to moderators.
 - Matchmaking currently pairs exact-size parties by format and region; rating-aware balancing and ready checks are still being expanded.

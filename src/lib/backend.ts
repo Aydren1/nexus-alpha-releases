@@ -24,6 +24,24 @@ export type CloudIncomingChat = {
   text: string;
 };
 
+export type CloudChatChannel = {
+  key: string;
+  name: string;
+  kind: 'public' | 'personal' | 'organization';
+  organizationName?: string;
+  ownerId?: string;
+  role?: 'owner' | 'admin' | 'member';
+  memberCount: number;
+};
+
+export type CloudChatMember = {
+  userId: string;
+  handle: string;
+  avatarUrl?: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedAt: string;
+};
+
 export type CloudOnlineUser = {
   userId: string;
   handle: string;
@@ -290,6 +308,80 @@ export const backend = {
     }));
   },
 
+  async listChatChannels(): Promise<CloudChatChannel[]> {
+    const { data, error } = await requireSupabase().rpc('list_my_chat_channels');
+    if (error) throw error;
+    return (data || []).map((row: any) => ({
+      key: row.channel_key,
+      name: row.channel_name,
+      kind: row.channel_kind,
+      organizationName: row.organization_name || undefined,
+      ownerId: row.owner_id || undefined,
+      role: row.my_role || undefined,
+      memberCount: Number(row.member_count || 0),
+    }));
+  },
+
+  async createChatChannel(name: string, kind: 'personal' | 'organization', organizationName?: string): Promise<string> {
+    const { data, error } = await requireSupabase().rpc('create_chat_channel', {
+      submitted_name: name,
+      submitted_kind: kind,
+      submitted_organization_name: organizationName || null,
+    });
+    if (error) throw error;
+    return String(data);
+  },
+
+  async listChatChannelMembers(channel: string): Promise<CloudChatMember[]> {
+    const { data, error } = await requireSupabase().rpc('list_chat_channel_members', { target_channel: channel });
+    if (error) throw error;
+    return (data || []).map((row: any) => ({
+      userId: row.user_id,
+      handle: row.handle,
+      avatarUrl: row.avatar_url || undefined,
+      role: row.member_role,
+      joinedAt: row.joined_at,
+    }));
+  },
+
+  async inviteChatChannelMember(channel: string, handle: string): Promise<void> {
+    const { error } = await requireSupabase().rpc('invite_chat_channel_member', {
+      target_channel: channel,
+      invited_handle: handle,
+    });
+    if (error) throw error;
+  },
+
+  async setChatChannelMemberRole(channel: string, userId: string, role: 'admin' | 'member'): Promise<void> {
+    const { error } = await requireSupabase().rpc('set_chat_channel_member_role', {
+      target_channel: channel,
+      target_user: userId,
+      new_role: role,
+    });
+    if (error) throw error;
+  },
+
+  async removeChatChannelMember(channel: string, userId: string): Promise<void> {
+    const { error } = await requireSupabase().rpc('remove_chat_channel_member', {
+      target_channel: channel,
+      target_user: userId,
+    });
+    if (error) throw error;
+  },
+
+  async deleteChatChannel(channel: string): Promise<void> {
+    const { error } = await requireSupabase().rpc('delete_chat_channel', { target_channel: channel });
+    if (error) throw error;
+  },
+
+  subscribeChatChannels(onChange: () => void): RealtimeChannel | null {
+    if (!cloudEnabled) return null;
+    return requireSupabase().channel('chat-channel-membership')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_channels' }, onChange)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_channel_members' }, onChange)
+      .subscribe();
+  },
+
   async sendChat(channel: string, text: string): Promise<void> {
     const client = requireSupabase();
     const { data: { user } } = await client.auth.getUser();
@@ -311,6 +403,8 @@ export const backend = {
     const { data: { user } } = await client.auth.getUser();
     if (!user) return null;
     const authorCache = new Map<string, string>();
+    const { data: channelRows } = await client.rpc('list_my_chat_channels');
+    const channelNames = new Map<string, string>((channelRows || []).map((row: any) => [String(row.channel_key), String(row.channel_name)]));
     return client.channel(`incoming-chat:${user.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
         const row = payload.new as { author_id?: string; channel?: string; body?: string };
@@ -323,7 +417,7 @@ export const backend = {
           }
           const resolvedAuthor = author || 'Verified pilot';
           authorCache.set(row.author_id!, resolvedAuthor);
-          onMessage({ channel: row.channel!, author: resolvedAuthor, text: row.body!.slice(0, 180) });
+          onMessage({ channel: channelNames.get(row.channel!) || row.channel!, author: resolvedAuthor, text: row.body!.slice(0, 180) });
         })();
       })
       .subscribe();

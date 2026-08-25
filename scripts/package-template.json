@@ -1,7 +1,7 @@
 {
   "name": "nexus-sc-competitive",
   "productName": "NEXUS",
-  "version": "0.5.0-alpha.7.12",
+  "version": "0.5.0-alpha.7.13",
   "description": "Windows-first competitive platform for Star Citizen",
   "private": true,
   "main": "electron/main.cjs"

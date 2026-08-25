@@ -1,4 +1,4 @@
-# NEXUS Alpha 7.12 tester guide
+# NEXUS Alpha 7.13 tester guide
 
 ## Supported system
 
@@ -9,7 +9,7 @@
 
 ## Installation
 
-1. Download the Alpha 7.12 ZIP only from the public official NEXUS GitHub Releases page.
+1. Download the Alpha 7.13 ZIP only from the public official NEXUS GitHub Releases page.
 2. Compare the ZIP checksum with `SHA256SUMS.txt`.
 3. Extract every file before opening NEXUS.
 4. Run `NEXUS.exe`.
@@ -28,6 +28,8 @@
 9. As staff, confirm ordinary result submissions create no alert; dispute a result and confirm it appears under the top bell and Admin → Match Disputes.
 10. In Settings, leave Background Chat Notifications enabled and select Minimize & Test Chat Alert. Confirm NEXUS minimizes and a native Windows notification appears; then disable the setting and confirm the test action is unavailable.
 11. Click the eligible ranked queue and confirm the card changes to CONNECTING immediately, becomes SEARCHING after cloud confirmation, and cancels without a frozen cursor.
+12. Create one personal channel and one organization channel, invite another verified RSI pilot, and confirm only members can see and use each channel.
+13. Confirm the channel owner can promote an admin, both can invite/remove ordinary members, a non-owner can leave, and the owner can delete the channel.
 
 ## Evidence privacy
 
