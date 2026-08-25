@@ -271,6 +271,11 @@ alter table public.chat_channel_members enable row level security;
 drop policy if exists chat_authenticated_read on public.chat_messages;
 drop policy if exists chat_own_insert on public.chat_messages;
 drop policy if exists chat_own_delete on public.chat_messages;
+drop policy if exists chat_member_read on public.chat_messages;
+drop policy if exists chat_member_insert on public.chat_messages;
+drop policy if exists chat_member_delete on public.chat_messages;
+drop policy if exists chat_channels_member_read on public.chat_channels;
+drop policy if exists chat_channel_members_member_read on public.chat_channel_members;
 create policy chat_member_read on public.chat_messages for select to authenticated
   using (public.can_access_chat_channel(channel, auth.uid()));
 create policy chat_member_insert on public.chat_messages for insert to authenticated
