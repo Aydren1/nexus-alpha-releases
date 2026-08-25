@@ -1,0 +1,202 @@
+:root {
+  --bg: #02060b;
+  --panel: #06111d;
+  --panel2: #081827;
+  --line: #123150;
+  --muted: #7391aa;
+  --text: #f2fbff;
+  --cyan: #00c8ff;
+  --orange: #00c8ff;
+  --lime: #57e4ff;
+  --violet: #008fe5;
+  --nexus-blue: #008fe5;
+  --nexus-navy: #001b4d;
+  --nexus-deep: #010611;
+  --nexus-white: #f8fcff;
+}
+
+/* Seamless Electron window chrome */
+.nexus-titlebar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 38px;
+  z-index: 250;
+  display: flex;
+  align-items: stretch;
+  color: var(--nexus-white);
+  background: #030a12;
+  border: 0;
+  box-shadow: none;
+  user-select: none;
+}
+
+.nexus-titlebar-drag {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  -webkit-app-region: drag;
+}
+
+.nexus-titlebar-drag img { width: 24px; height: 24px; object-fit: contain; }
+.nexus-titlebar-drag b { font: 800 12px 'Barlow Condensed'; letter-spacing: 2.6px; }
+.nexus-titlebar-drag span { color: #6d8aa2; font: 600 7px Inter; letter-spacing: 1.4px; }
+.nexus-window-controls { display: flex; -webkit-app-region: no-drag; }
+.nexus-window-controls button {
+  width: 46px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  color: #88a9bd;
+  background: transparent;
+}
+.nexus-window-controls button:hover { color: #fff; background: #0a2d43; }
+.nexus-window-controls button.window-close:hover { background: #0d6080; }
+.nexus-window-controls svg { width: 14px; height: 14px; stroke-width: 1.7; }
+
+.nexus-desktop .app-shell { padding-top: 38px; }
+.nexus-desktop :is(.rail,.social-rail,main) { height: calc(100vh - 38px); }
+.nexus-desktop .page-wrap { height: calc(100vh - 112px); }
+.nexus-desktop .drawer-backdrop { inset: 38px 0 0; }
+.nexus-desktop .utility-backdrop { inset: 38px 0 0; }
+.nexus-desktop .auth-shell { height: 100vh; padding-top: 38px; }
+.nexus-desktop .capture-setup-shell { height: 100vh; padding-top: 70px; }
+.nexus-desktop :is(.alpha-boot,.moderation-lock) { padding-top: 38px; }
+
+/* Logo-derived cyan, white, navy, and black system */
+body,
+.app-shell {
+  color: var(--nexus-white);
+  background: radial-gradient(circle at 72% 12%, #08243d 0, transparent 30%), var(--bg);
+}
+
+:is(.rail,.social-rail,.topbar) { background: #030a12; border-color: #102d43; }
+:is(.panel,.queue-card,.active-match-card,.event-row,.weekly-card,.circuit-row,.mission-card,.utility-panel,.party-drawer,.chat-drawer,.profile-drawer,.evidence-drawer) {
+  background-color: #06101a;
+  border-color: #12304a;
+}
+
+/* Authentication uses the same surface, accent, and control language as the app. */
+.auth-shell {
+  background: radial-gradient(circle at 20% 60%, #073149 0, transparent 31%), radial-gradient(circle at 78% 34%, #08243d 0, transparent 29%), #030a12;
+}
+.auth-grid { background-image: linear-gradient(#1a527033 1px,transparent 1px),linear-gradient(90deg,#1a527033 1px,transparent 1px); }
+.auth-orbit { border-color: #2c90b166; }
+.auth-header { background: #030a12; border-bottom-color: #102d43; }
+.auth-card { background: #06101af5; border-color: #12304a; }
+.auth-switch { background: #030a12; border-color: #12304a; }
+.auth-switch button.active { background: #0a2d43; color: #d8f8ff; }
+.auth-card input { background: #02070c; border-color: #173a50; color: var(--nexus-white); }
+.auth-card input:focus { border-color: var(--cyan); }
+.auth-stepper>span { background: #030a12; border-color: #245269; }
+.auth-stepper>span.done { background: #0a2d43; border-color: var(--cyan); color: #d8f8ff; }
+.auth-stepper>i,.verify-steps,.verify-steps>div { border-color: #12304a; }
+.verify-note,.bio-code { background: #030a12; border-color: #1d5369; }
+
+/* High-contrast marks and arcs echo the approved fighter-duel emblem. */
+:is(.brand-mark img,.capture-setup-brand img,.nexus-titlebar-drag img) { filter: drop-shadow(0 0 8px #00c8ff55); }
+:is(.primary,.auth-submit) {
+  background: linear-gradient(105deg, #00aeea, #23d7ff 62%, #f8fcff 160%);
+  color: #001322;
+  box-shadow: 0 0 22px #00c8ff2e;
+}
+:is(.primary,.auth-submit):hover { background: linear-gradient(105deg, #16c7ff, #5fe6ff); }
+:is(.primary-nav button.active,.ranking-filters button.active,.chat-channel-tabs button.active) {
+  background: linear-gradient(90deg, #001b4d, #062237);
+  color: var(--nexus-white);
+}
+:is(.queue-card.selected,.mission-card.tracked,.active-match-card,.auth-card,.capture-setup-card) {
+  box-shadow: inset 0 0 0 1px #00c8ff18, 0 0 26px #00c8ff0c;
+}
+:is(.hero-orbit,.auth-orbit,.featured-event:after) { border-color: #00c8ff66; }
+.hero-orbit { box-shadow: 0 0 76px #00c8ff20, inset 0 0 60px #008fe518; }
+.capture-setup-shell { background: radial-gradient(circle at 50% 22%, #06324d 0, transparent 35%), linear-gradient(145deg, #010611, #030a12); }
+.capture-setup-card { background: #04101bf2; border-color: #164765; }
+.setup-progress span.active { background: #001b4d; border-color: var(--cyan); color: var(--nexus-white); }
+.hotkey-recorder,.capture-test-zone,.setup-summary { background: #020914; border-color: #164765; }
+.setup-complete-icon { background: radial-gradient(circle, #06436a, #001b4d); border-color: var(--cyan); color: var(--nexus-white); }
+
+.hero {
+  background: radial-gradient(circle at 73% 30%, #0a3d59 0, transparent 32%), linear-gradient(110deg, #071826, #02070c 68%);
+  border-color: #184761;
+}
+.hero-grid { background-image: linear-gradient(#1a527055 1px,transparent 1px),linear-gradient(90deg,#1a527055 1px,transparent 1px); }
+.hero-orbit { border-color: #2c90b1; box-shadow: 0 0 70px #42d9f522, inset 0 0 60px #42d9f514; }
+.hero h1 em,.featured-event h2 em,.auth-story h1 em { -webkit-text-stroke-color: #8fdff1; }
+
+:is(.orange,.lime,.violet) .queue-art,
+.queue-art {
+  color: var(--cyan);
+  background: radial-gradient(circle, #0d3b50, transparent 62%), linear-gradient(135deg, #071a29, #030a11);
+}
+:is(.orange,.lime,.violet) .queue-art { color: var(--cyan); }
+.queue-card:is(.orange,.lime,.violet).selected { border-color: var(--cyan); }
+
+.weekly-card:is(.orange,.lime),
+.weekly-card { background: linear-gradient(145deg, #071724, #040b12); }
+.weekly-card:is(.orange,.lime):before { background: var(--cyan); box-shadow: 0 0 15px #42d9f5; }
+.weekly-card:is(.orange,.lime) .weekly-day b { color: var(--cyan); }
+.weekly-card:is(.orange,.lime)>button:not(.registered) { background: #082435; border-color: #23627b; color: #a7efff; }
+
+.featured-event { background: radial-gradient(circle at 75% 50%, #0b3850, transparent 34%), linear-gradient(110deg, #071722, #02070b 68%); border-color: #245269; }
+.featured-event:after { border-color: #42d9f545; box-shadow: 0 0 80px #42d9f520; }
+:is(.event-icon,.event-1,.event-2,.mission-icon,.mi-1,.mi-2) { background: #082338; color: var(--cyan); }
+.org-card:is(.orange,.lime) .team-logo { color: var(--cyan); }
+.team-logo:is(.orange-logo,.cyan-logo) { background: linear-gradient(145deg, #0c3c55, #061929); color: #c6f5ff; }
+
+:is(.result-mark,.result-mark.loss) { background: #082333; color: var(--cyan); border-left-color: var(--cyan); }
+:is(.result-text,.match-row b.win,.approved .verification-icon,.saved-state,.ready,.capture-test-zone.success>div) { color: var(--cyan); }
+:is(.result-text.loss,.match-row b.loss) { color: #d8eaf2; }
+:is(.verification,.verification.approved,.verification.disputed) { border-color: #24526a; background: linear-gradient(90deg, #071d2b, #050d14); }
+:is(.verification-icon,.approved .verification-icon,.disputed .verification-icon) { background: #0a2d40; color: var(--cyan); }
+:is(.live-pill,.streak,.event-row>div>b,.admin-event strong) { color: #8eeaff; }
+
+:is(.connection>span,.profile-chip small i,.friend .avatar i,.auth-footer i,.live-dot,.icon-button i) {
+  background: var(--cyan);
+  box-shadow: 0 0 9px #42d9f5;
+}
+
+:is(.auth-error,.chat-error,.setup-error) { background: #071a28; border-color: #245a72; color: #bfefff; }
+.primary.danger,.danger-outline { background: #082337; border: 1px solid #2d7894; color: #d8f7ff; }
+.moderation-lock { background: radial-gradient(circle at 50% 32%, #0a3850, #02060a 50%); }
+.moderation-lock>svg { color: var(--cyan); }
+.moderation-lock>div,.ban-editor { background: #06131e; border-color: #24536a; }
+.moderation-lock small,.ban-editor label,.admin-users p { color: #7fb6c8; }
+.moderation-lock strong { color: #e9faff; }
+.ban-editor :is(textarea,select) { background: #030a10; border-color: #1b4358; color: #e5f8ff; }
+
+.theme-night {
+  --bg: #000;
+  --panel: #000;
+  --panel2: #000;
+  --line: #143246;
+  --muted: #718b99;
+  --text: #f3fbff;
+  --orange: #00c8ff;
+  --lime: #57e4ff;
+  --violet: #008fe5;
+}
+html[data-theme='night'] .nexus-titlebar { background: #000; border: 0; box-shadow: none; }
+html[data-theme='night'] .nexus-window-controls button:hover { background: #071d29; }
+html[data-theme='night'] :is(.auth-shell,.auth-header,.auth-card,.auth-switch,.auth-card input,.auth-stepper>span,.verify-note,.bio-code) {
+  background: #000 !important;
+  background-image: none !important;
+  border-color: #16394c !important;
+}
+.theme-night :is(.orange,.lime,.violet) .queue-art,
+.theme-night :is(.weekly-card,.featured-event,.moderation-lock,.verification,.verification.approved,.verification.disputed,.auth-error,.chat-error,.setup-error,.ban-editor) {
+  background: #000 !important;
+  border-color: #16394c !important;
+}
+.theme-night :is(.result-mark,.result-mark.loss,.verification-icon,.approved .verification-icon,.disputed .verification-icon,.event-icon,.event-1,.event-2,.mission-icon,.mi-1,.mi-2) {
+  background: #000 !important;
+  color: var(--cyan) !important;
+  border-color: #1d5369 !important;
+}
+.theme-night :is(.danger-outline,.primary.danger) { background: #000 !important; color: #c8f4ff !important; border-color: #245b72 !important; }
+.theme-night :is(.primary,.auth-submit) { background: #000 !important; color: var(--nexus-white) !important; border-color: var(--cyan) !important; box-shadow: none !important; }
+.theme-night :is(.capture-setup-shell,.capture-setup-card,.hotkey-recorder,.capture-test-zone,.setup-summary,.setup-complete-icon) { background: #000 !important; background-image: none !important; border-color: #164765 !important; box-shadow: none !important; }
+html[data-theme='night'] :is(.capture-setup-shell,.capture-setup-card,.hotkey-recorder,.capture-test-zone,.setup-summary,.setup-complete-icon) { background: #000 !important; background-image: none !important; border-color: #164765 !important; box-shadow: none !important; }
+html[data-theme='night'] :is(.capture-setup-shell .primary,.capture-setup-shell .secondary) { background: #000 !important; color: var(--nexus-white) !important; border: 1px solid var(--cyan) !important; box-shadow: none !important; }

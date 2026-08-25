@@ -6,4 +6,4 @@ Profile verification reads the public RSI Citizen Dossier selected by the player
 
 Desktop match screenshots are saved locally under `Pictures\NEXUS\Captures` and are not uploaded automatically. Testers should review captures for personal information before sharing them.
 
-This is an unfinished invitation-only alpha. Data may be reset during development. Testers should not reuse passwords from RSI, email, banking, or other services. Questions and deletion requests should be sent directly to Cero during the friends test.
+This is an unfinished invitation-only alpha. Data may be reset during development. Testers should not reuse passwords from RSI, email, banking, or other services. Questions and deletion requests should be sent privately to the NEXUS project maintainers.

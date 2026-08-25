@@ -1,0 +1,31 @@
+{
+  "name": "NEXUS - Star Citizen Competitive",
+  "short_name": "NEXUS",
+  "description": "Competitive matchmaking, parties, tournaments, rankings, and match verification for Star Citizen.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["games", "sports", "social"],
+  "icons": [
+    {
+      "src": "/nexus-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/nexus-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/nexus-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

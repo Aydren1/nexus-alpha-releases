@@ -1,4 +1,4 @@
-# NEXUS Alpha 7.8 tester guide
+# NEXUS Alpha 7.12 tester guide
 
 ## Supported system
 
@@ -9,7 +9,7 @@
 
 ## Installation
 
-1. Download the Alpha 7.8 ZIP only from the public official NEXUS GitHub Releases page.
+1. Download the Alpha 7.12 ZIP only from the public official NEXUS GitHub Releases page.
 2. Compare the ZIP checksum with `SHA256SUMS.txt`.
 3. Extract every file before opening NEXUS.
 4. Run `NEXUS.exe`.
