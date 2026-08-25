@@ -32,7 +32,7 @@ NEXUS is an open-registration competitive matchmaking alpha for Star Citizen. An
 
 1. Download `NEXUS-0.5.0-alpha.7.12-win-x64.zip` from this release.
 2. Confirm its SHA-256 value matches `SHA256SUMS.txt`.
-3. Extract the entire ZIP to a normal folder such as `C:\Games\NEXUS Alpha 7.12`.
+3. Extract the entire ZIP into a folder you control, such as `NEXUS Alpha 7.12`.
 4. Open `NEXUS.exe`. Do not run it from inside the ZIP.
 5. Because this friends build is unsigned, Windows may show **Windows protected your PC**. Confirm the download came from this release before choosing **More info → Run anyway**.
 

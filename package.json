@@ -13,6 +13,7 @@
     "package:windows": "pnpm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Package-Windows.ps1",
     "release:windows": "pnpm run package:windows && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Make-PortableRelease.ps1",
     "refresh:portable": "pnpm run build && node scripts/Refresh-PortableRelease.cjs && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Make-PortableRelease.ps1",
+    "verify:public-source": "node scripts/Verify-PublicSource.cjs",
     "verify:portable": "node scripts/Verify-PortableRelease.cjs",
     "preview": "vite preview",
     "desktop": "electron ."

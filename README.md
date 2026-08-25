@@ -80,6 +80,8 @@ The current workspace is connected to the shared cloud alpha through the ignored
 
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. Do not commit `.env.local`, passwords, access tokens, service-role keys, private messages, player evidence screenshots, or generated release packages. Sensitive vulnerabilities should be reported using [SECURITY.md](./SECURITY.md), not a public issue.
 
+Run `pnpm run verify:public-source` before publishing. The same check runs in CI and rejects tracked developer-home paths, Codex runtime paths, hard-coded repository-owner URLs, live Supabase project URLs, and common private-key or token formats.
+
 The source is published for project transparency. No open-source license has been granted yet; all rights are reserved unless a license is added later.
 
 ## Product direction
