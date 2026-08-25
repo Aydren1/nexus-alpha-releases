@@ -308,3 +308,6 @@ begin
   end if;
 end;
 $$;
+
+-- Make the newly created RPCs immediately discoverable by the Supabase API.
+notify pgrst, 'reload schema';
